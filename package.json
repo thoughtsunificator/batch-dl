@@ -1,0 +1,21 @@
+{
+	"name": "@thoughtsunificator/batch-dl",
+	"version": "1.0.5",
+	"description": "CLI to download a batch list of URLs",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/thoughtsunificator/batch-dl.git"
+	},
+	"bugs": {
+		"url": "https://github.com/thoughtsunificator/batch-dl/issues"
+	},
+	"author": "Romain Lebesle <oss@thoughtsunificator.me> (https://thoughtsunificator.me)",
+	"license": "MIT",
+	"main": "index.js",
+	"bin": {
+		"batch-dl": "./server.js"
+	},
+	"dependencies": {
+		"tracer": "^1.0.3"
+	}
+}
