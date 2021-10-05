@@ -1,6 +1,6 @@
 {
 	"name": "@thoughtsunificator/batch-dl",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"description": "CLI to download a batch list of URLs",
 	"repository": {
 		"type": "git",
