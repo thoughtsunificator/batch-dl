@@ -12,15 +12,15 @@ const consoleLogger = tracer.colorConsole({
 })
 
 const logger = tracer.dailyfile({
-		root: "./logs",
-		maxLogFiles: 10,
-		format: "{{timestamp}} {{message}}",
-		dateformat: 'HH:MM:ss',
-		splitFormat: 'yyyymmdd',
-		allLogsFileName: "batch-download",
-		transport: function (data) {
-			consoleLogger[data.title](data.output)
-		},
+	root: "./logs",
+	maxLogFiles: 10,
+	format: "{{timestamp}} {{message}}",
+	dateformat: 'HH:MM:ss',
+	splitFormat: 'yyyymmdd',
+	allLogsFileName: "batch-download",
+	transport: function (data) {
+		consoleLogger[data.title](data.output)
+	},
 })
 
 const PATH_DOWNLOAD_DIRECTORY = "./downloads/"
@@ -78,27 +78,27 @@ function downloadFileFromURL(url, callback) {
 		client = http
 	}
 	const clientRequest = client.request(url, function(response) {
-			let chunks = []
-			logger.log(response.statusCode)
-			logger.log(JSON.stringify(response.headers))
-			response.on("data", function(chunk) {
-				logger.log("data...")
-				chunks.push(chunk)
-				logger.log(chunk)
+		let chunks = []
+		logger.log(response.statusCode)
+		logger.log(JSON.stringify(response.headers))
+		response.on("data", function(chunk) {
+			logger.log("data...")
+			chunks.push(chunk)
+			logger.log(chunk)
+		})
+		response.on("end", function() {
+			logger.log("No more data in response.")
+			let fileName = sanitizeFilename(getRealFileName(url, response))
+			fs.writeFile(PATH_DOWNLOAD_DIRECTORY + fileName, Buffer.concat(chunks), function(error) {
+				if(error !== null) {
+					throw error
+				}
+				logger.log(fileName +" has been saved.")
+				if(typeof callback !== "undefined") {
+					setTimeout(callback, 500)
+				}
 			})
-			response.on("end", function() {
-				logger.log("No more data in response.")
-				let fileName = sanitizeFilename(getRealFileName(url, response))
-				fs.writeFile(PATH_DOWNLOAD_DIRECTORY + fileName, Buffer.concat(chunks), function(error) {
-					if(error !== null) {
-							throw error
-					}
-					logger.log(fileName +" has been saved.")
-					if(typeof callback !== "undefined") {
-						setTimeout(callback, 500)
-					}
-				})
-			})
+		})
 	})
 	clientRequest.on("connection", function(e) {
 	 logger.log("Connected to "+url+".")
