@@ -1,24 +1,29 @@
 #!/usr/bin/env node
 
-const logger = require("tracer").dailyfile({
+const tracer = require("tracer")
+const fs = require("fs")
+const https = require('https')
+const http = require('http')
+const path = require("path")
+const sanitizeFilename = require("sanitize-filename")
+
+const consoleLogger = tracer.colorConsole({
+	format : "{{message}}"
+})
+
+const logger = tracer.dailyfile({
 		root: "./logs",
 		maxLogFiles: 10,
-		allLogsFileName: "batch-download"
+		format: "{{timestamp}} {{message}}",
+		dateformat: 'HH:MM:ss',
+		splitFormat: 'yyyymmdd',
+		allLogsFileName: "batch-download",
+		transport: function (data) {
+			consoleLogger[data.title](data.output)
+		},
 })
-const fs = require("fs")
-const https = require('https');
-const http = require('http');
-const path = require("path")
 
 const PATH_DOWNLOAD_DIRECTORY = "./downloads/"
-
-if (!fs.existsSync("./logs")) {
-	fs.mkdirSync("./logs");
-}
-
-if (!fs.existsSync(PATH_DOWNLOAD_DIRECTORY)) {
-	fs.mkdirSync(PATH_DOWNLOAD_DIRECTORY);
-}
 
 if(process.argv.length >= 3) {
 	const input = process.argv[2]
@@ -83,7 +88,7 @@ function downloadFileFromURL(url, callback) {
 			})
 			response.on("end", function() {
 				logger.log("No more data in response.")
-				let fileName = getRealFileName(url, response)
+				let fileName = sanitizeFilename(getRealFileName(url, response))
 				fs.writeFile(PATH_DOWNLOAD_DIRECTORY + fileName, Buffer.concat(chunks), function(error) {
 					if(error !== null) {
 							throw error

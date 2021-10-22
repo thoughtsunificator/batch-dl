@@ -16,6 +16,7 @@
 		"batch-dl": "./server.js"
 	},
 	"dependencies": {
+		"sanitize-filename": "^1.6.3",
 		"tracer": "^1.0.3"
 	}
 }
